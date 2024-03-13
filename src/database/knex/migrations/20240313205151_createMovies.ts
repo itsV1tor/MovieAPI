@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('description');
     table.integer('raiting');
     table.integer('user_id').unsigned().references('users.id');
-    table.timestamps(true, true).defaultTo(knex.fn.now());
+    table.timestamps(true, true);
   });
 }
 
