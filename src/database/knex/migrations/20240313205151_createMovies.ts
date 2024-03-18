@@ -3,8 +3,9 @@ import type { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('movies', (table) => {
     table.increments('id').primary();
-    table.string('description');
-    table.integer('raiting');
+    table.string('title').notNullable();
+    table.string('description').notNullable;
+    table.integer('raiting').notNullable;
     table.integer('user_id').unsigned().references('users.id');
     table.timestamps(true, true);
   });
