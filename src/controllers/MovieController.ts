@@ -85,4 +85,57 @@ export class MovieController {
       message: 'Movie is updated.',
     });
   }
+
+  async show(request: Request, response: Response) {
+    const { user_id, movie_id } = request.params;
+
+    const user = await knex('users').select('*').where('id', '=', user_id).first();
+
+    if (!user) {
+      throw new AppError('User does not exist.');
+    }
+
+    const movie = await knex('movies')
+      .select('*')
+      .where('id', '=', movie_id)
+      .where('user_id', '=', user.id)
+      .first();
+
+    if (!movie) {
+      throw new AppError('Movie does not exist');
+    }
+
+    response.status(200).json({
+      status: 'success',
+      message: 'Movies successfully rescued.',
+      movie,
+    });
+  }
+
+  async delete(request: Request, response: Response) {
+    const { user_id, movie_id } = request.params;
+
+    const user = await knex('users').select('*').where('id', '=', user_id).first();
+
+    if (!user) {
+      throw new AppError('User does not exists.');
+    }
+
+    const movie = await knex('movies')
+      .select('*')
+      .where('id', '=', movie_id)
+      .where('user_id', '=', user.id)
+      .first();
+
+    if (!movie) {
+      throw new AppError('movie does not exists');
+    }
+
+    await knex('movies').delete().where('id', '=', movie.id);
+
+    response.status(200).json({
+      status: 'success',
+      message: 'Movie is deleted',
+    });
+  }
 }
