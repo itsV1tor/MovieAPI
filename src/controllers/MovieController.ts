@@ -30,4 +30,59 @@ export class MovieController {
       message: 'Your movie is registered.',
     });
   }
+
+  async read(request: Request, response: Response) {
+    const { user_id } = request.params;
+
+    const user = await knex('users').select('*').where('id', '=', user_id).first();
+
+    if (!user) {
+      throw new AppError('User does not exist.');
+    }
+
+    const movies = await knex('movies').select('*').where({ user_id });
+
+    response.status(200).json({
+      status: 'success',
+      message: 'Movies successfully rescued.',
+      movies,
+    });
+  }
+
+  async update(request: Request, response: Response) {
+    const { title, description, raiting }: MovieDataType = request.body;
+    const { user_id, movie_id } = request.params;
+
+    const user = await knex('users').select('*').where('id', '=', user_id).first();
+
+    if (!user) {
+      throw new AppError('User does not exist.');
+    }
+
+    const movie = await knex('movies')
+      .select('*')
+      .where('id', '=', movie_id)
+      .where('user_id', '=', user.id)
+      .first();
+
+    console.log(movie);
+
+    if (!movie) {
+      throw new AppError('Movie does not exist.');
+    }
+
+    await knex('movies')
+      .update({
+        title,
+        description,
+        raiting,
+        updated_at: knex.fn.now(),
+      })
+      .where('id', '=', movie.id);
+
+    response.status(200).json({
+      status: 'success',
+      message: 'Movie is updated.',
+    });
+  }
 }

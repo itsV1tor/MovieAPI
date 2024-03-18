@@ -107,7 +107,7 @@ export class UserController {
       .update({ name, email, password: user.password, updated_at: knex.fn.now() })
       .where({ id });
 
-    response.status(202).json({
+    response.status(200).json({
       status: 'success',
       message: 'User are updated',
     });
